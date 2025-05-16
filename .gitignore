@@ -60,3 +60,4 @@ logs/
 .DS_Store
 .AppleDouble
 .LSOverride
+production.env

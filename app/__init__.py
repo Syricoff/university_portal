@@ -27,6 +27,10 @@ def create_app(config_class=Config):
     db.init_app(app)
     migrate.init_app(app, db)
     
+    # Инициализация специфичных настроек для конфигурации
+    if hasattr(config_class, 'init_app'):
+        config_class.init_app(app)
+    
     # Регистрация blueprints
     from app.routes.main import bp as main_bp
     app.register_blueprint(main_bp)

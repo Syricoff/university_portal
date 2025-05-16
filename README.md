@@ -122,6 +122,68 @@ flask run
 
 После запуска приложение будет доступно по адресу [http://localhost:5000](http://localhost:5000)
 
+### Запуск в продакшн-окружении
+
+Для запуска приложения в продакшн-среде рекомендуется использовать Gunicorn или uWSGI совместно с Nginx.
+
+#### Настройка продакшн-окружения:
+
+1. Создайте и настройте файл с переменными окружения:
+```bash
+cp production.env .env
+# Отредактируйте .env, установив значения для продакшена, особенно SECRET_KEY и DATABASE_URL
+```
+
+2. Установите дополнительные зависимости:
+```bash
+pip install gunicorn psycopg2-binary
+```
+
+3. Запуск с помощью Gunicorn:
+```bash
+gunicorn -w 4 -b 0.0.0.0:5000 "run:app"
+```
+
+4. Настройка в качестве системного сервиса:
+Создайте файл `/etc/systemd/system/university_portal.service`:
+
+```ini
+[Unit]
+Description=Университетский портал
+After=network.target
+
+[Service]
+User=username
+WorkingDirectory=/path/to/university_portal
+Environment="PATH=/path/to/university_portal/venv/bin"
+ExecStart=/path/to/university_portal/venv/bin/gunicorn -w 4 -b 0.0.0.0:5000 "run:app"
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Затем активируйте и запустите сервис:
+```bash
+sudo systemctl enable university_portal
+sudo systemctl start university_portal
+```
+
+5. Настройка Nginx в качестве прокси:
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    location / {
+        proxy_pass http://localhost:5000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
+
 ## Особенности реализации
 
 ### Система контроля доступа
