@@ -1,0 +1,394 @@
+/* Основные стили */
+:root {
+    --primary-color: #344955;
+    --primary-light: #4a6572;
+    --primary-dark: #232f34;
+    --accent-color: #f9aa33;
+    --accent-light: #ffdb75;
+    --text-light: #ffffff;
+    --text-dark: #333333;
+    --success-color: #4caf50;
+    --warning-color: #ff9800;
+    --danger-color: #f44336;
+    --info-color: #03a9f4;
+    --gray-light: #f8f9fa;
+    --gray-medium: #e9ecef;
+    --gray-dark: #343a40;
+    --transition: all 0.3s ease;
+    --border-radius: 0.5rem;
+    --box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+    --box-shadow-hover: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+body {
+    font-family: 'Roboto', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--text-dark);
+    background-color: #f5f7fa;
+    line-height: 1.6;
+}
+
+/* Навигация */
+.navbar {
+    background-color: var(--primary-color) !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 0.75rem 1rem;
+}
+
+.navbar-brand {
+    font-weight: 600;
+    color: var(--text-light) !important;
+    font-size: 1.5rem;
+    transition: var(--transition);
+}
+
+.navbar-brand:hover {
+    color: var(--accent-color) !important;
+    transform: translateY(-2px);
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: var(--text-light) !important;
+    font-weight: 500;
+    transition: var(--transition);
+    position: relative;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: var(--accent-color) !important;
+}
+
+.navbar-dark .navbar-nav .nav-link:after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: var(--accent-color);
+    transition: var(--transition);
+}
+
+.navbar-dark .navbar-nav .nav-link:hover:after {
+    width: 100%;
+}
+
+.dropdown-menu {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 0.5rem;
+}
+
+.dropdown-item {
+    border-radius: 0.25rem;
+    padding: 0.5rem 1rem;
+    transition: var(--transition);
+}
+
+.dropdown-item:hover {
+    background-color: var(--gray-light);
+}
+
+/* Карточки */
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+    overflow: hidden;
+}
+
+.card:hover {
+    box-shadow: var(--box-shadow-hover);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    font-weight: 500;
+    background-color: var(--primary-color) !important;
+    color: var(--text-light) !important;
+    border-bottom: none;
+    padding: 1rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Таблицы */
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    background-color: white;
+}
+
+.table thead th {
+    background-color: var(--primary-light);
+    color: var(--text-light);
+    font-weight: 500;
+    border-bottom: none;
+    padding: 0.75rem 1rem;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: var(--gray-light);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(249, 170, 51, 0.1);
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1px var(--accent-color);
+}
+
+.table td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+    border-color: var(--gray-medium);
+}
+
+/* Сортировка таблиц */
+table.sortable th {
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    padding-right: 2rem;
+}
+
+.sort-icon {
+    display: inline-block;
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.5);
+    transition: var(--transition);
+}
+
+th[data-sort="asc"] .sort-icon,
+th[data-sort="desc"] .sort-icon {
+    color: var(--accent-color);
+}
+
+/* Кнопки */
+.btn {
+    font-weight: 500;
+    border-radius: var(--border-radius);
+    padding: 0.5rem 1.25rem;
+    transition: var(--transition);
+    letter-spacing: 0.02em;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+}
+
+.btn-warning {
+    background-color: var(--warning-color);
+    border-color: var(--warning-color);
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+}
+
+.btn-info {
+    background-color: var(--info-color);
+    border-color: var(--info-color);
+}
+
+/* Формы */
+.form-control, .form-select {
+    border-radius: var(--border-radius);
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--gray-medium);
+    transition: var(--transition);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.25rem rgba(249, 170, 51, 0.25);
+}
+
+.form-label {
+    font-weight: 500;
+}
+
+/* Прогресс-бары */
+.progress {
+    height: 1.5rem;
+    border-radius: var(--border-radius);
+    background-color: var(--gray-light);
+    overflow: hidden;
+    margin: 0;
+}
+
+.progress-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-light);
+    font-weight: 500;
+    transition: width 0.5s ease;
+}
+
+/* Алерты */
+.alert {
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 0.75rem 1.25rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--box-shadow);
+    position: relative;
+    text-align: center;
+}
+
+.alert .btn-close {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.alert i {
+    margin-right: 0.5rem;
+}
+
+.alert-success {
+    background-color: rgba(76, 175, 80, 0.15);
+    color: var(--success-color);
+}
+
+.alert-danger {
+    background-color: rgba(244, 67, 54, 0.15);
+    color: var(--danger-color);
+}
+
+.alert-warning {
+    background-color: rgba(255, 152, 0, 0.15);
+    color: var(--warning-color);
+}
+
+.alert-info {
+    background-color: rgba(3, 169, 244, 0.15);
+    color: var(--info-color);
+}
+
+/* Бейджи */
+.badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+    border-radius: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.75em;
+}
+
+/* Утилиты */
+.bi {
+    font-style: normal;
+}
+
+/* Адаптивность */
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        background-color: var(--primary-light);
+        padding: 1rem;
+        border-radius: var(--border-radius);
+        margin-top: 0.5rem;
+    }
+    
+    .dropdown-menu {
+        background-color: var(--primary-dark);
+    }
+    
+    .dropdown-item {
+        color: var(--text-light);
+    }
+    
+    .dropdown-item:hover {
+        background-color: var(--primary-color);
+    }
+}
+
+/* Панель авторизации */
+.login-card {
+    max-width: 400px;
+    margin: 100px auto 0;
+    transition: var(--transition);
+}
+
+.login-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Стили для страниц отчетов */
+.report-heading {
+    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.filter-card {
+    margin-bottom: 2rem;
+    transition: var(--transition);
+}
+
+.filter-card:hover {
+    box-shadow: var(--box-shadow-hover);
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Стили футера */
+.footer {
+    background-color: var(--primary-dark);
+    color: var(--text-light);
+    padding: 2rem 0;
+    margin-top: 3rem;
+}
+
+.footer a {
+    color: var(--accent-light);
+    transition: var(--transition);
+}
+
+.footer a:hover {
+    color: var(--text-light);
+    text-decoration: none;
+}

@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="report-heading">
+    <h2><i class="bi bi-bar-chart-line"></i> Отчёт по посещаемости</h2>
+    <div class="btn-group">
+        <a href="{{ url_for('attendance.list') }}" class="btn btn-outline-primary">
+            <i class="bi bi-list-check"></i> Журнал
+        </a>
+        <a href="{{ url_for('attendance.bulk') }}" class="btn btn-outline-success">
+            <i class="bi bi-pencil-square"></i> Заполнить
+        </a>
+    </div>
+</div>
+
+<!-- Фильтры -->
+<div class="card filter-card mb-4">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-funnel"></i> Фильтры</h5>
+            <a href="{{ url_for('attendance.report') }}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-arrow-counterclockwise"></i> Сбросить
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label for="start_date" class="form-label">Начальная дата</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                    <input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date }}">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label for="end_date" class="form-label">Конечная дата</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                    <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date }}">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label for="group_id" class="form-label">Группа</label>
+                <select class="form-select" id="group_id" name="group_id">
+                    <option value="">Все группы</option>
+                    {% for group in groups %}
+                    <option value="{{ group.id }}" {% if selected_group_id and selected_group_id|int == group.id %}selected{% endif %}>{{ group.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="subject_id" class="form-label">Предмет</label>
+                <select class="form-select" id="subject_id" name="subject_id">
+                    <option value="">Все предметы</option>
+                    {% for subject in subjects %}
+                    <option value="{{ subject.id }}" {% if selected_subject_id and selected_subject_id|int == subject.id %}selected{% endif %}>{{ subject.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-search"></i> Применить фильтры
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Данные отчета -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-table"></i> Результаты</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-striped mt-0 sortable" id="report-table">
+                <thead>
+                    <tr>
+                        <th><i class="bi bi-person"></i> Студент</th>
+                        <th><i class="bi bi-collection"></i> Группа</th>
+                        <th><i class="bi bi-calendar2-check"></i> Всего занятий</th>
+                        <th><i class="bi bi-check-circle"></i> Присутствовал</th>
+                        <th><i class="bi bi-percent"></i> Процент посещаемости</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in report %}
+                    <tr>
+                        <td>{{ row.first_name }} {{ row.last_name }}</td>
+                        <td>{{ row.group_name }}</td>
+                        <td>{{ row.total }}</td>
+                        <td>{{ row.presents }}</td>
+                        <td>
+                            {% if row.total > 0 %}
+                                <div class="progress">
+                                    <div class="progress-bar {% if (row.presents / row.total * 100) > 80 %}bg-success{% elif (row.presents / row.total * 100) > 60 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                         role="progressbar" 
+                                         style="width: {{ (row.presents / row.total * 100) | round(1) }}%;" 
+                                         aria-valuenow="{{ (row.presents / row.total * 100) | round(1) }}" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100">
+                                        {{ (row.presents / row.total * 100) | round(1) }}%
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="progress">
+                                    <div class="progress-bar bg-secondary" role="progressbar" style="width: 100%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                        0%
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if not report.first() %}
+        <div class="text-center py-4">
+            <i class="bi bi-exclamation-circle fs-1 text-muted"></i>
+            <p class="text-muted mt-2">Нет данных для отображения</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Добавим анимацию для прогресс-баров
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(() => {
+            const bars = document.querySelectorAll('.progress-bar');
+            bars.forEach(bar => {
+                const width = bar.getAttribute('aria-valuenow');
+                bar.style.width = width + '%';
+            });
+        }, 100);
+    });
+</script>
+{% endblock %}

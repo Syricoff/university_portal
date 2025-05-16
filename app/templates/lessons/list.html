@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Расписание занятий</h2>
+
+<!-- Фильтры -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <form method="get" class="d-flex align-items-center">
+            <div class="me-3">
+                <label for="week_type" class="form-label">Тип недели:</label>
+                <select class="form-select" id="week_type" name="week_type" onchange="this.form.submit()">
+                    <option value="Все" {% if week_type == "Все" %}selected{% endif %}>Все недели</option>
+                    <option value="Чет" {% if week_type == "Чет" %}selected{% endif %}>Четная</option>
+                    <option value="Нечет" {% if week_type == "Нечет" %}selected{% endif %}>Нечетная</option>
+                    <option value="Обе" {% if week_type == "Обе" %}selected{% endif %}>Обе недели</option>
+                </select>
+            </div>
+            <div class="me-3">
+                <label for="group_id" class="form-label">Группа:</label>
+                <select class="form-select" id="group_id" name="group_id" onchange="this.form.submit()" {% if session.user_role == 'student' %}disabled{% endif %}>
+                    {% if session.user_role == 'admin' %}
+                    <option value="">Все группы</option>
+                    {% endif %}
+                    {% for group in groups %}
+                    <option value="{{ group.id }}" {% if selected_group_id and selected_group_id|int == group.id %}selected{% endif %}>{{ group.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Расписание по дням недели -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="schedule-container">
+            {% for day_code, day_lessons in lessons_by_day.items() %}
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    {% if day_code == "Пн" %}Понедельник
+                    {% elif day_code == "Вт" %}Вторник
+                    {% elif day_code == "Ср" %}Среда
+                    {% elif day_code == "Чт" %}Четверг
+                    {% elif day_code == "Пт" %}Пятница
+                    {% elif day_code == "Сб" %}Суббота
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {% if day_lessons %}
+                    <div class="table-responsive">
+                        <table class="table table-striped sortable" id="lessons-table-{{ day_code }}">
+                            <thead>
+                                <tr>
+                                    <th>№ пары</th>
+                                    <th>Предмет</th>
+                                    <th>Тип занятия</th>
+                                    <th>Группа</th>
+                                    <th>Тип недели</th>
+                                    {% if can_edit %}
+                                    <th class="no-sort">Действия</th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for lesson in day_lessons %}
+                                <tr>
+                                    <td>{{ lesson.lesson_number }}</td>
+                                    <td>{{ lesson.subject.name }}</td>
+                                    <td>
+                                        <span class="badge 
+                                        {% if lesson.lesson_type == 'Лекция' %}bg-info
+                                        {% elif lesson.lesson_type == 'Практика' %}bg-success
+                                        {% elif lesson.lesson_type == 'Семинар' %}bg-warning
+                                        {% else %}bg-secondary{% endif %}">
+                                            {{ lesson.lesson_type }}
+                                        </span>
+                                    </td>
+                                    <td>{{ lesson.group.name }}</td>
+                                    <td>
+                                        <span class="badge 
+                                        {% if lesson.week_type == 'Обе' %}bg-primary
+                                        {% elif lesson.week_type == 'Чет' %}bg-success
+                                        {% elif lesson.week_type == 'Нечет' %}bg-warning
+                                        {% endif %}">
+                                            {{ lesson.week_type }}
+                                        </span>
+                                    </td>
+                                    {% if can_edit %}
+                                    <td>
+                                        <a href="{{ url_for('lessons.edit', id=lesson.id) }}" class="btn btn-sm btn-warning"><i class="bi">&#9998;</i></a>
+                                        <form method="post" action="{{ url_for('lessons.delete', id=lesson.id) }}" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Удалить занятие?')"><i class="bi">&#128465;</i></button>
+                                        </form>
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">Занятий нет</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% if can_edit %}
+<a href="{{ url_for('lessons.create') }}" class="btn btn-success"><i class="bi">&#43;</i> Добавить занятие</a>
+{% endif %}
+
+<style>
+    .card-header {
+        font-weight: bold;
+    }
+    .badge {
+        font-size: 0.9em;
+    }
+</style>
+{% endblock %} 

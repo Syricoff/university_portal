@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Добавить запись посещаемости</h2>
+<form method="post" class="mt-3" autocomplete="off">
+    <div class="mb-3">
+        <label for="lesson_id" class="form-label">Занятие</label>
+        <select class="form-select" id="lesson_id" name="lesson_id" required>
+            <option value="">Выберите занятие</option>
+            {% for lesson in lessons %}
+            <option value="{{ lesson.id }}">{{ lesson.subject.name }} ({{ lesson.lesson_type }}) - {{ lesson.group.name }} - {{ lesson.day_of_week }}, пара {{lesson.lesson_number}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="student_id" class="form-label">Студент</label>
+        <select class="form-select" id="student_id" name="student_id" required>
+            <option value="">Выберите студента</option>
+            {% for student in students %}
+            <option value="{{ student.id }}">{{ student.user.first_name }} {{ student.user.last_name }} ({{ student.group.name }})</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="date" class="form-label">Дата</label>
+        <input type="date" class="form-control" id="date" name="date" required>
+    </div>
+    <div class="mb-3">
+        <label for="status" class="form-label">Статус</label>
+        <select class="form-select" id="status" name="status" required>
+            <option value="present">Присутствовал</option>
+            <option value="absent">Отсутствовал</option>
+            <option value="late">Опоздал</option>
+            <option value="sick">Болеет</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-success">Создать</button>
+    <a href="{{ url_for('attendance.list') }}" class="btn btn-secondary">Назад</a>
+</form>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Заполнение посещаемости группы</h2>
+
+<!-- Форма выбора параметров -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        Выберите параметры
+    </div>
+    <div class="card-body">
+        <form method="get" class="row g-3" id="filter-form">
+            <div class="col-md-4">
+                <label for="date" class="form-label">Дата</label>
+                <input type="date" class="form-control" id="date" name="date" value="{{ date }}" required>
+            </div>
+            <div class="col-md-4">
+                <label for="group_id" class="form-label">Группа</label>
+                <select class="form-select" id="group_id" name="group_id" required>
+                    <option value="">Выберите группу</option>
+                    {% for group in groups %}
+                    <option value="{{ group.id }}" {% if selected_group_id and selected_group_id|int == group.id %}selected{% endif %}>{{ group.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="lesson_id" class="form-label">Занятие</label>
+                <select class="form-select" id="lesson_id" name="lesson_id" {% if not lessons %}disabled{% endif %} required>
+                    <option value="">Выберите занятие</option>
+                    {% for lesson in lessons %}
+                    <option value="{{ lesson.id }}" {% if selected_lesson_id and selected_lesson_id|int == lesson.id %}selected{% endif %}>{{ lesson.subject.name }} ({{ lesson.lesson_type }}) - {{ lesson.day_of_week }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Показать</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Форма отметки посещаемости -->
+{% if students and selected_lesson_id %}
+<form method="post">
+    <input type="hidden" name="date" value="{{ date }}">
+    <input type="hidden" name="lesson_id" value="{{ selected_lesson_id }}">
+    
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            Отметка посещаемости
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Студент</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td>{{ student.user.first_name }} {{ student.user.last_name }}</td>
+                            <td>
+                                <select class="form-select" name="student_{{ student.id }}">
+                                    <option value="present" {% if student.id in attendance_records and attendance_records[student.id] == 'present' %}selected{% endif %}>Присутствовал</option>
+                                    <option value="absent" {% if student.id in attendance_records and attendance_records[student.id] == 'absent' %}selected{% endif %}>Отсутствовал</option>
+                                    <option value="late" {% if student.id in attendance_records and attendance_records[student.id] == 'late' %}selected{% endif %}>Опоздал</option>
+                                    <option value="sick" {% if student.id in attendance_records and attendance_records[student.id] == 'sick' %}selected{% endif %}>Болеет</option>
+                                </select>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button type="submit" class="btn btn-success">Сохранить</button>
+            <a href="{{ url_for('attendance.list') }}" class="btn btn-secondary">Назад</a>
+        </div>
+    </div>
+</form>
+{% elif selected_group_id %}
+<div class="alert alert-info">
+    Выберите занятие для отображения списка студентов.
+</div>
+{% endif %}
+
+<script>
+    // Автоматическое обновление формы при изменении группы
+    document.getElementById('group_id').addEventListener('change', function() {
+        document.getElementById('filter-form').submit();
+    });
+</script>
+{% endblock %} 

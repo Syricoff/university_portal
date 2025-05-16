@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Список предметов</h2>
+<table class="table table-hover sortable" id="subjects-table">
+    <thead class="table-dark">
+        <tr>
+            <th>Название предмета</th>
+            <th class="no-sort">Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for subject in subjects %}
+        <tr>
+            <td>{{ subject.name }}</td>
+            <td>
+                <a href="{{ url_for('subjects.edit', id=subject.id) }}" class="btn btn-sm btn-warning"><i class="bi">&#9998;</i></a>
+                <form method="post" action="{{ url_for('subjects.delete', id=subject.id) }}" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Удалить предмет?')"><i class="bi">&#128465;</i></button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('subjects.create') }}" class="btn btn-success"><i class="bi">&#43;</i> Добавить предмет</a>
+{% endblock %} 
